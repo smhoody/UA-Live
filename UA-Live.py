@@ -10,6 +10,12 @@ Currently Used Twitter accounts and their IDs:
 @Ukraine            : 732521058507620356
 @Ukraine_World      : 873135988440223745
 @ZelenskyyUa        : 1120633726478823425
+@UKRINFORM          : 167317309
+@FedorovMykhailo    : 1331528215899344896
+@EuromaidanPress    : 2595088842
+@NewVoiceUkraine    : 1483388011371016195
+@mrsorokaa          : 1091409575343992832
+@IAPonomarenko      : 262219168
 
 to add more accounts, add it to the json file in util
 """
