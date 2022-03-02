@@ -16,12 +16,10 @@ Currently Used Twitter accounts and their IDs:
 @NewVoiceUkraine    : 1483388011371016195
 @mrsorokaa          : 1091409575343992832
 @IAPonomarenko      : 262219168
-
+@ua_industrial      : 435239369
 to add more accounts, add it to the json file in util
 """
-import tweepy, sys, time
-import requests
-import random
+import tweepy, time
 import json
 #local
 from Account import Account
@@ -31,28 +29,34 @@ WOEIDS = {"ukraine":23424976, "kyiv":924938, "donetsk":919163, "lviv":924943}
 
 def tweet_update(api, accounts):
     """
-        Retreive updated twitter account info and print for each account
+    Retreive updated twitter account info and print for each account
 
-        api (API object from tweepy)
-        accounts (list of Account objects)
+    :param api: (API object from tweepy)
+    :param accounts: (list of Account objects)
     """
     while True:
         for account in accounts:
             twitter_account = api.get_user(user_id=account.get_id())
-            if (account.get_tweet() != twitter_account.status.text): #essentially makes sure it doesnt print if there isnt a new tweet
-                account.set_tweet(twitter_account.status.text)
-                account.set_time(est_convert(twitter_account.status.created_at))
+            try:
+                tweet = twitter_account.status
+            except AttributeError: #Wrong object will be returned from get_user if there is a problem with the ID
+                print("Could not retrieve tweet from account ID", account.get_id())
+            else:
+                if (account.get_tweet() != tweet.status.text): #essentially makes sure it doesnt print if there isnt a new tweet
+                    account.set_tweet(tweet.status.text)
+                    account.set_time(est_convert(tweet.status.created_at))
 
-                print("\n\n", account.get_username(), "\n", account.get_time(), "\n", account.get_tweet())
-                retweet(api, twitter_account.status)
+                    print("\n\n", account.get_username(), "\n", account.get_time(), "\n", account.get_tweet())
+                    retweet(api, twitter_account.status)
         
         time.sleep(60)  # 1 minute pause
 
 
 def retweet(api, tweet):
     """ 
-        Retweets the given tweet
-        tweet (Status object from tweepy)
+    Retweets the given tweet
+    :param api: (API object from tweepy)
+    :param tweet: (Status object from tweepy)
     """
     try:
         api.retweet(tweet.id)
@@ -76,8 +80,8 @@ def est_convert(time):
     """
     Converts the time from UTC to EST
 
-    Time (string): from KYIV_INDEPENDENT_ACC.status.created_at
-    return string with date and time in EST
+    :param Time: (string from KYIV_INDEPENDENT_ACC.status.created_at)
+    :return: (string with date and time in EST)
     """
     status_datetime = str(time).split(" ")
     EST_hour = int(status_datetime[1][0:2]) - 5 #change 5 hours behind
